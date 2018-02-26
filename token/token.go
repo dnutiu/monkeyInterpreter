@@ -21,6 +21,14 @@ const (
 	PLUS   = "+"
 	MINUS  = "-"
 	TIMES  = "*"
+	BANG   = "!"
+	SLASH  = "/"
+
+	EQ = "=="
+	NOT_EQ = "!="
+
+	LT = "<"
+	GT = ">"
 
 	// Delimiters
 	COMMA     = ","
@@ -30,14 +38,27 @@ const (
 	LBRACE    = "{"
 	RBRACE    = "}"
 
+)
+
+const (
 	// Keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
+	IF       = "IF"
+	ELSE     = "ELSE"
+	RETURN   = "RETURN"
 )
 
 var keywords = map[string]TokenType{
 	"fn":  FUNCTION,
 	"let": LET,
+	"true": TRUE,
+	"false": FALSE,
+	"if": IF,
+	"else": ELSE,
+	"return": RETURN,
 }
 
 // LookupIdent returns a token based on the intent.

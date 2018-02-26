@@ -107,3 +107,110 @@ func TestLexer_NextToken2(t *testing.T) {
 		}
 	}
 }
+
+func TestLexer_TestNextToken3(t *testing.T) {
+	input := `<>!/*`
+
+	tests := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		{token.LT, "<"},
+		{token.GT, ">"},
+		{token.BANG, "!"},
+		{token.SLASH, "/"},
+		{token.TIMES, "*"},
+	}
+
+	l := New(input)
+
+	for i, tt := range tests {
+		tk := l.NextToken()
+
+		if tk.Type != tt.expectedType {
+			t.Fatalf("TestNextToken test[%d]: Wrong token type, expected %q got %q", i, tt.expectedType, tk.Type)
+		}
+
+		if tk.Literal != tt.expectedLiteral {
+			t.Fatalf("TestNextToken test[%d]: Wrong token literal, expected %q got %q", i, tt.expectedLiteral, tk.Literal)
+		}
+	}
+}
+
+func TestLexer_TestNextToken4(t *testing.T) {
+	input := `
+	if (true > false) {
+		return 0;
+	} else return 1 < 0;
+	`
+
+	tests := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		{token.IF, "if"},
+		{token.LPAREN, "("},
+		{token.TRUE, "true"},
+		{token.GT, ">"},
+		{token.FALSE, "false"},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
+		{token.RETURN, "return"},
+		{token.INT, "0"},
+		{token.SEMICOLON, ";"},
+		{token.RBRACE, "}"},
+		{token.ELSE, "else"},
+		{token.RETURN, "return"},
+		{token.INT, "1"},
+		{token.LT, "<"},
+		{token.INT, "0"},
+		{token.SEMICOLON, ";"},
+	}
+
+	l := New(input)
+
+	for i, tt := range tests {
+		tk := l.NextToken()
+
+		if tk.Type != tt.expectedType {
+			t.Fatalf("TestNextToken test[%d]: Wrong token type, expected %q got %q", i, tt.expectedType, tk.Type)
+		}
+
+		if tk.Literal != tt.expectedLiteral {
+			t.Fatalf("TestNextToken test[%d]: Wrong token literal, expected %q got %q", i, tt.expectedLiteral, tk.Literal)
+		}
+	}
+}
+func TestLexer_TestNextToken5(t *testing.T) {
+	input := `
+	1 != 1
+	1 == 1
+	`
+
+	tests := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		{token.INT, "1"},
+		{token.NOT_EQ, "!="},
+		{token.INT, "1"},
+
+		{token.INT, "1"},
+		{token.EQ, "=="},
+		{token.INT, "1"},
+	}
+
+	l := New(input)
+
+	for i, tt := range tests {
+		tk := l.NextToken()
+
+		if tk.Type != tt.expectedType {
+			t.Fatalf("TestNextToken test[%d]: Wrong token type, expected %q got %q", i, tt.expectedType, tk.Type)
+		}
+
+		if tk.Literal != tt.expectedLiteral {
+			t.Fatalf("TestNextToken test[%d]: Wrong token literal, expected %q got %q", i, tt.expectedLiteral, tk.Literal)
+		}
+	}
+}
