@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"github.com/metonimie/monkeyInterpreter/lexer"
 	"github.com/metonimie/monkeyInterpreter/parser"
+	"github.com/metonimie/monkeyInterpreter/evaluator"
+	"github.com/metonimie/monkeyInterpreter/object"
 )
 
 const PROMPT = ">"
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
+	env := object.NewEnvironment()
 
 	for {
 		fmt.Printf(PROMPT)
@@ -27,8 +30,13 @@ func Start(in io.Reader, out io.Writer) {
 			printParserErrors(out, p.Errors())
 			continue
 		}
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+		//io.WriteString(out, program.String())
+		//io.WriteString(out, "\n")
+		ev := evaluator.Eval(program, env)
+		if ev != nil {
+			io.WriteString(out, ev.Inspect())
+			io.WriteString(out, "\n")
+		}
 	}
 
 exit:
