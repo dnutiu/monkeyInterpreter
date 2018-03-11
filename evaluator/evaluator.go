@@ -93,17 +93,23 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 	if !ok {
 		return newError("not a function: %s", fn.Type())
 	}
-	extendedEnv := extendFunctionEnv(function, args)
+	extendedEnv, err := extendFunctionEnv(function, args)
+	if err != nil {
+		return err
+	}
 	evaluated := Eval(function.Body, extendedEnv)
 	return unwrapReturnValue(evaluated)
 }
 
-func extendFunctionEnv(fn *object.Function, args []object.Object) *object.Environment {
+func extendFunctionEnv(fn *object.Function, args []object.Object) (*object.Environment, object.Object)  {
 	env := object.NewEnclosedEnvironment(fn.Env)
+	if len(args) != len(fn.Parameters) {
+		return nil, newError("invalid number of arguments!")
+	}
 	for paramIdx, param := range fn.Parameters {
 		env.Set(param.Value, args[paramIdx])
 	}
-	return env
+	return env, nil
 }
 
 func unwrapReturnValue(obj object.Object) object.Object {
