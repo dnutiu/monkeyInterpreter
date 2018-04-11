@@ -138,6 +138,12 @@ func (p *Parser) parseLoopLiteral() ast.Expression {
 	lit := &ast.LoopLiteral{Token: p.curToken}
 	p.nextToken()
 	lit.Repeats = p.parseExpression(LOWEST)
+	_, e := strconv.Atoi(lit.Repeats.String());
+	if e != nil {
+		p.errors = append(p.errors, "Loop expression must be int")
+		return nil
+	}
+
 	if !p.expectPeek(token.LBRACE) {
 		return nil
 	}
