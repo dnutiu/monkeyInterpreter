@@ -240,9 +240,27 @@ func (fl *FunctionLiteral) String() string {
 	return out.String()
 }
 
+type LoopLiteral struct {
+	Token   token.Token
+	Repeats Expression
+	Body    *BlockStatement
+}
+
+func (fl *LoopLiteral) expressionNode()      {}
+func (fl *LoopLiteral) TokenLiteral() string { return fl.Token.Literal }
+func (fl *LoopLiteral) String() string {
+	var out bytes.Buffer
+	out.WriteString(fl.TokenLiteral())
+	out.WriteString(" ")
+	out.WriteString(fl.Repeats.String())
+	out.WriteString(" ")
+	out.WriteString(fl.Body.String())
+	return out.String()
+}
+
 type CallExpression struct {
-	Token    token.Token // The '(' token
-	Function Expression  // Identifier or FunctionLiteral
+	Token     token.Token // The '(' token
+	Function  Expression  // Identifier or FunctionLiteral
 	Arguments []Expression
 }
 

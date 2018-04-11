@@ -4,6 +4,7 @@ import (
 	"github.com/metonimie/monkeyInterpreter/object"
 	"github.com/metonimie/monkeyInterpreter/ast"
 	"fmt"
+	"strconv"
 )
 
 var (
@@ -74,6 +75,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		body := node.Body
 		return &object.Function{Parameters: params, Env: env, Body: body}
 
+	case *ast.LoopLiteral:
+		return evalLoopExpression(node, env)
+
 	case *ast.IfExpression:
 		return evalIfExpression(node, env)
 
@@ -86,6 +90,19 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	}
 
 	return nil
+}
+func evalLoopExpression(literal *ast.LoopLiteral, environment *object.Environment) object.Object {
+	expression := Eval(literal.Repeats, environment)
+	var evaluated object.Object = NULL
+
+	start := 0
+	end, _ := strconv.Atoi(expression.Inspect())
+
+	for ; start < end; start++ {
+		evaluated = Eval(literal.Body, environment)
+	}
+
+	return evaluated
 }
 
 func applyFunction(fn object.Object, args []object.Object) object.Object {
@@ -101,7 +118,7 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 	return unwrapReturnValue(evaluated)
 }
 
-func extendFunctionEnv(fn *object.Function, args []object.Object) (*object.Environment, object.Object)  {
+func extendFunctionEnv(fn *object.Function, args []object.Object) (*object.Environment, object.Object) {
 	env := object.NewEnclosedEnvironment(fn.Env)
 	if len(args) != len(fn.Parameters) {
 		return nil, newError("invalid number of arguments!")

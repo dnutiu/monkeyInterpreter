@@ -14,6 +14,7 @@ const (
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 	ERROR_OBJ        = "ERROR"
 	FUNCTION_OBJ     = "FUNCTION"
+	LOOP_OBJ         = "LOOP"
 )
 
 type ObjectType string
@@ -113,5 +114,21 @@ func (f *Function) Inspect() string {
 	out.WriteString(") {\n")
 	out.WriteString(f.Body.String())
 	out.WriteString("\n}")
+	return out.String()
+}
+
+type Loop struct {
+	Parameters []*ast.Identifier
+	Repeats    *ast.Expression
+	Body       *ast.BlockStatement
+	Env        *Environment
+}
+
+func (f *Loop) Type() ObjectType { return LOOP_OBJ }
+func (f *Loop) Inspect() string {
+	var out bytes.Buffer
+	out.WriteString("loop")
+	out.WriteString("xTIMES")
+	out.WriteString(f.Body.String())
 	return out.String()
 }
